@@ -8,6 +8,7 @@ class InsertFrame(Frame):
         self.insert_frame = Frame(self, root)
 
         self.db = database
+        self.cursor = self.db.cursor()
 
         ### track number
         self.track_label = Label(self.insert_frame, text = "Track number:", font = LABEL_FONT_STYLE)

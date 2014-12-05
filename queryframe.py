@@ -6,9 +6,10 @@ class QueryFrame(Frame):
     def __init__(self, root, database):
         Frame.__init__(self, root)
         self.query_frame = Frame(self, root)
-        
+
         self.db = database
-        
+        self.cursor = self.db.cursor()
+
         self.view_db = Button(self.query_frame, text = "DEBUG - View contents", command = self.view, font = LABEL_FONT_STYLE)
         self.view_db.pack(pady = 10)
 
@@ -41,15 +42,12 @@ class QueryFrame(Frame):
         self.submit_query_button = Button(self.query_frame, text = "Submit", command = self.submit_query, font = LABEL_FONT_STYLE)
         self.submit_query_button.pack()
 
-        #self.result_field = Text(self.query_frame, width = 50, height = 15, font = ("Courier New", 12))
-        #self.result_field.pack(pady = 10)
-        
         self.result_field = Listbox(self.query_frame, width = 50, height = 15, font = ("Courier New", 12))
         self.result_field.pack()
-        
+
         self.delete_button = Button(self.query_frame, text = "Delete Selected", command = self.delete, font = LABEL_FONT_STYLE)
         self.delete_button.pack()
-        
+
         self.query_frame.pack()
 
     def submit_query(self, *args):
@@ -57,14 +55,14 @@ class QueryFrame(Frame):
         query_string = self.query_item.get().upper()
         query_type = self.get_query_type(self.search_type_default.get()) # change dropdown text to match db fields
 
-        query_cursor = self.db.cursor()
+        
         select_statement = """ SELECT * FROM MUSIC WHERE {0} LIKE '%{1}%' """.format(query_type, query_string)
         # Using the LIKE statement allows searching for substrings
         # allows input of "mer" to match "summer, mermaid, hammering"
-        query_cursor.execute(select_statement)
+        self.cursor.execute(select_statement)
 
         results = []
-        for row in query_cursor:
+        for row in self.cursor:
             result_str = ""
             for i in row:
                 result_str += str(i) + " "
@@ -73,16 +71,15 @@ class QueryFrame(Frame):
         self.result_field.delete(0, END)
         for i in range(len(results)):
             self.result_field.insert(END, results[i])
-        query_cursor.close()
-        
-        
+
+
     def delete(self, *args):
         """ pull selected items and delete them from the results field
         and from the database """
 
         selected_items = self.result_field.curselection() # tuple of indices
         rows_to_delete = []
-        
+
         for i in range(len(selected_items)):
             # split each item into its separate fields
             rows_to_delete.append(self.result_field.get(selected_items[i]).split("\t"))
@@ -91,16 +88,15 @@ class QueryFrame(Frame):
             for field in range(len(row)): # each part of an entry
                 row[field] = row[field].strip()  # pull off extra whitespace for db query
         print(rows_to_delete)
-        
+
         #del_cursor = self.db.cursor()
         for row in rows_to_delete:
-            del_cursor = self.db.execute("DELETE FROM MUSIC WHERE title = ? AND artist = ? AND cdname = ?", (row[1], row[2], row[3]))
+            self.cursor.execute("DELETE FROM MUSIC WHERE title = ? AND artist = ? AND cdname = ?", (row[1], row[2], row[3]))
             self.db.commit()
-            
-            
+
+
         for index in selected_items: # update listbox to show deletion
             self.result_field.delete(index)
-        del_cursor.close()
 
 
 
@@ -117,10 +113,9 @@ class QueryFrame(Frame):
 
 
     def view(self):
-        cursor = self.db.cursor()
-        cursor.execute("""select * from MUSIC""")
+        self.cursor.execute("""select * from MUSIC""")
         results = []
-        for row in cursor:
+        for row in self.cursor:
             result_str = ""
             for i in row:
                 result_str += str(i) + " "
@@ -128,7 +123,7 @@ class QueryFrame(Frame):
         self.result_field.delete(0, END)
         for i in range(len(results)):
             self.result_field.insert(END, results[i])
-        cursor.close()
+
 
 
     def query_type_change(self, *args):
