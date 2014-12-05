@@ -2,10 +2,7 @@ from Tkinter import *
 import sqlite3
 from insertframe import *
 from queryframe import *
-
-BUTTON_FONT_STYLE = ("Arial", 18)
-LABEL_FONT_STYLE = ("Arial", 14)
-ENTRY_FONT_STYLE = ("Arial", 12)
+from global_vars import *
 
 db = sqlite3.connect("data/test.db")
 

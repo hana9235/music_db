@@ -1,0 +1,3 @@
+BUTTON_FONT_STYLE = ("Arial", 18)
+LABEL_FONT_STYLE = ("Arial", 14)
+ENTRY_FONT_STYLE = ("Arial", 12)

@@ -1,9 +1,6 @@
 from Tkinter import *
 import sqlite3
-
-BUTTON_FONT_STYLE = ("Arial", 18)
-LABEL_FONT_STYLE = ("Arial", 14)
-ENTRY_FONT_STYLE = ("Arial", 12)
+from global_vars import *
 
 class QueryFrame(Frame):
     def __init__(self, root, database):
