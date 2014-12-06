@@ -62,7 +62,6 @@ class QueryFrame(Frame):
         query_string = self.query_item.get().upper()
         query_type = self.get_query_type(self.search_type_default.get()) # change dropdown text to match db fields
 
-        
         select_statement = """ SELECT * FROM MUSIC WHERE {0} LIKE '%{1}%' """.format(query_type, query_string)
         # Using the LIKE statement allows searching for substrings
         # allows input of "mer" to match "summer, mermaid, hammering"
@@ -98,7 +97,7 @@ class QueryFrame(Frame):
 
         #del_cursor = self.db.cursor()
         for row in rows_to_delete:
-            self.cursor.execute("DELETE FROM MUSIC WHERE title = ? AND artist = ? AND cdname = ?", (row[1], row[2], row[3]))
+            self.cursor.execute("DELETE FROM MUSIC WHERE title = ? AND artist = ? AND cdname = ?", (row[1] + '\t', row[2] + '\t', row[3] + '\t'))
             self.db.commit()
 
 
