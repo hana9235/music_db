@@ -24,14 +24,14 @@ class InsertFrame(Frame):
         self.title.pack()
         self.title_entry_default = StringVar()
         self.title_entry_default.set("")
-        self.title_combobox = ttk.Combobox(self.insert_frame, textvariable = self.title_entry_default, font = ENTRY_FONT_STYLE, values = TITLES)
+        self.title_combobox = ttk.Combobox(self.insert_frame, textvariable = self.title_entry_default, font = ENTRY_FONT_STYLE, values = TITLES, postcommand = self.adjust_title_dropdown)
         self.title_combobox.pack()
         ### artist
         self.artist = Label(self.insert_frame, text = "Artist:", font = LABEL_FONT_STYLE)
         self.artist.pack()
         self.artist_entry_default = StringVar()
         self.artist_entry_default.set("")
-        self.artist_combobox = ttk.Combobox(self.insert_frame, textvariable = self.artist_entry_default, font = ENTRY_FONT_STYLE, values = ARTISTS)
+        self.artist_combobox = ttk.Combobox(self.insert_frame, textvariable = self.artist_entry_default, font = ENTRY_FONT_STYLE, values = ARTISTS, postcommand = self.adjust_artist_dropdown)
         self.artist_combobox.pack()
 
         ### album title
@@ -39,7 +39,7 @@ class InsertFrame(Frame):
         self.album.pack()
         self.album_entry_default = StringVar()
         self.album_entry_default.set("")
-        self.album_combobox = ttk.Combobox(self.insert_frame, textvariable = self.album_entry_default, font = ENTRY_FONT_STYLE, values = ALBUMS)
+        self.album_combobox = ttk.Combobox(self.insert_frame, textvariable = self.album_entry_default, font = ENTRY_FONT_STYLE, values = ALBUMS, postcommand = self.adjust_album_dropdown)
         self.album_combobox.pack()
 
         ### media type
@@ -47,7 +47,7 @@ class InsertFrame(Frame):
         self.media.pack()
         self.media_menu_default = StringVar()
         self.media_menu_default.set("CD")
-        media_options = ["CD", "DVD", "VHS", "Cassette"]
+        media_options = ["CD", "Cassette", "DVD", "VHS"]
         self.media_menu_dropdown = OptionMenu(self.insert_frame, self.media_menu_default, *media_options)
         self.media_menu_dropdown.config(font = ENTRY_FONT_STYLE)
         media_menu = self.media_menu_dropdown.nametowidget(self.media_menu_dropdown['menu'])
@@ -82,7 +82,36 @@ class InsertFrame(Frame):
                         'media':self.media_menu_default.get() + "\t",
                         'year':self.year_default.get()}
                         )
-            print("added to db")
             self.db.commit()
         except:
             tkmb.showerror("Duplicate entry", "This entry is probably already in the database.")
+            
+    def adjust_title_dropdown(self, *args):
+        """ adjust the dropdown in the title combobox to suggest only items containing the 
+        already entered text """
+        curr_entry = self.title_entry_default.get().upper()
+        new_values = []
+        for title in TITLES:
+            if curr_entry in title:
+                new_values.append(title)
+        self.title_combobox.config(values = new_values)
+        
+    def adjust_artist_dropdown(self, *args):
+        """ adjust the dropdown in the title combobox to suggest only items containing the 
+        already entered text """
+        curr_entry = self.artist_entry_default.get().upper()
+        new_values = []
+        for artist in ARTISTS:
+            if curr_entry in artist:
+                new_values.append(artist)
+        self.artist_combobox.config(values = new_values)
+        
+    def adjust_album_dropdown(self, *args):
+        """ adjust the dropdown in the title combobox to suggest only items containing the 
+        already entered text """
+        curr_entry = self.album_entry_default.get().upper()
+        new_values = []
+        for album in ALBUMS:
+            if curr_entry in album:
+                new_values.append(album)
+        self.album_combobox.config(values = new_values)

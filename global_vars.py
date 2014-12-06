@@ -19,17 +19,24 @@ cursor.execute(get_titles)
 for row in cursor:
     if row[0].rstrip() not in TITLES:
         TITLES.append(row[0].rstrip())
+TITLES.sort()
 
 cursor.execute(get_artists)
 for row in cursor:
     if row[0].rstrip() not in ARTISTS:
         ARTISTS.append(row[0].rstrip())
+ARTISTS.sort()
 
 cursor.execute(get_albums)
 for row in cursor:
     if row[0].rstrip() not in ALBUMS:
         ALBUMS.append(row[0].rstrip())
-    
+ALBUMS.sort()
+
 populating_db.close()
 
+readme_text = """ """
+readme_file = open("readme.txt")
+readme_text = readme_file.read()
+readme_file.close()
 

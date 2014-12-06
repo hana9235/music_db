@@ -34,57 +34,53 @@ def insert_into_db(row):
     db.commit()
 
 
-infile_path = os.path.join(data_folder, "testnobar.csv")
-#read_input_file(infile_path) # uncomment to add the file again
+infile_path = os.path.join(data_folder, "test.csv")
+read_input_file(infile_path) # uncomment to add the file again
 
 ### DB SHOULD ONLY BE SET UP ONCE, THEN ALLOW HIM TO ADD THINGS AS HE WANTS
 ### MAKE SURE TO COMMIT AFTER EVERY SINGLE ADDITION
 ### TWO TABLES, ONE FOR CDS AND ONE FOR DVDS?
 
-
+#db.execute(""" DROP TABLE MUSIC """)
 db.execute(""" CREATE TABLE IF NOT EXISTS MUSIC 
-            (TRACK INT NOT NULL,
+            (TRACK VARCHAR(3) NOT NULL,
             TITLE VARCHAR(90) NOT NULL,
             ARTIST VARCHAR(45) NOT NULL,
             CDNAME VARCHAR(90) NOT NULL,
             MEDIA VARCHAR(12) NOT NULL,
-            YEAR INT NOT NULL)""") # REMOVE NOT NULLS FOR THESE
+            YEAR INT,
+            PRIMARY KEY (TITLE, ARTIST, CDNAME))""") # REMOVE NOT NULLS FOR THESE
 
+def docstring_hider():
+    """
+    tracknum = int(raw_input("Enter the track number: "))
+    title = raw_input("Enter the song title: ")
+    artist = raw_input("Enter the artist: ")
+    cdname = raw_input("Enter the CD name: ")
+    year = int(raw_input("Enter the year the album was released: "))
 
-"""
-tracknum = int(raw_input("Enter the track number: "))
-title = raw_input("Enter the song title: ")
-artist = raw_input("Enter the artist: ")
-cdname = raw_input("Enter the CD name: ")
-year = int(raw_input("Enter the year the album was released: "))
+    #db.execute(''' INSERT INTO MUSIC(track, title, artist, cdname, year)
+    #                VALUES(:track, :title, :artist, :cd, :year)''',
+    #                {'track':tracknum, 
+    #                'title':title, 
+    #                'artist':artist,
+    #                'cd':cdname,
+    #                'year':year}
+    #                )
 
-#db.execute(''' INSERT INTO MUSIC(track, title, artist, cdname, year)
-#                VALUES(:track, :title, :artist, :cd, :year)''',
-#                {'track':tracknum, 
-#                'title':title, 
-#                'artist':artist,
-#                'cd':cdname,
-#                'year':year}
-#                )
+    # once connected, do things like this:
+    # db.execute('''CREATE TABLE ... \
+    #               (ID INT PRIMARY KEY NOT NULL, 
+    #               NAME VARCHAR(20) NOT NULL)''')
 
-# once connected, do things like this:
-# db.execute('''CREATE TABLE ... \
-#               (ID INT PRIMARY KEY NOT NULL, 
-#               NAME VARCHAR(20) NOT NULL)''')
+    db.commit()
+    """
 
-db.commit()
-"""
 cursor = db.cursor()
 cursor.execute("""SELECT * from MUSIC""")
 for row in cursor:
     print(row[0], row[1], row[2], row[3], row[4], row[5])
 
-cursor2 = db.cursor()
-cursor2.execute('SELECT * FROM MUSIC WHERE TITLE = "{0}"'.format("poopy"))
-print("\n\n")
-print("cursor contains: ")
-for row in cursor2:
-    print(row)
 db.commit()
 
 

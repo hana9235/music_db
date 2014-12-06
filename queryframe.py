@@ -10,9 +10,6 @@ class QueryFrame(Frame):
         self.db = database
         self.cursor = self.db.cursor()
 
-        self.view_db = Button(self.query_frame, text = "DEBUG - View contents", command = self.view, font = LABEL_FONT_STYLE)
-        self.view_db.pack(pady = 10)
-
         self.query_header = Label(self.query_frame, text = "Search for items:", font = LABEL_FONT_STYLE)
         self.query_header.pack()
 
@@ -39,21 +36,19 @@ class QueryFrame(Frame):
         self.query_box = Entry(self.query_frame, textvariable = self.query_item, font = ENTRY_FONT_STYLE)
         self.query_box.pack()
 
-        # search button
-        self.submit_query_button = Button(self.query_frame, text = "Submit", command = self.submit_query, font = LABEL_FONT_STYLE)
-        self.submit_query_button.pack()
-
         # result field and scrollbars
         self.y_scroll = Scrollbar(self.query_frame, orient = VERTICAL)
-        
         self.result_field = Listbox(self.query_frame, width = 50, height = 15,
-                                        yscrollcommand = self.y_scroll.set, font = ("Courier New", 12))
+                                        yscrollcommand = self.y_scroll.set, font = ("Courier New", 12), borderwidth = 5, relief = GROOVE)
         self.y_scroll.pack(side = RIGHT, fill = Y, anchor = N)
         self.y_scroll.config(command = self.result_field.yview)
-        self.result_field.pack()
+        self.result_field.pack(pady = 20)
 
+        # delete and view all buttons
         self.delete_button = Button(self.query_frame, text = "Delete Selected", command = self.delete, font = LABEL_FONT_STYLE)
-        self.delete_button.pack()
+        self.delete_button.pack(side = RIGHT, padx = 10)
+        self.view_all_button = Button(self.query_frame, text = "View All", command = self.view, font = LABEL_FONT_STYLE)
+        self.view_all_button.pack(side = LEFT)
 
         self.query_frame.pack()
 
@@ -69,7 +64,6 @@ class QueryFrame(Frame):
 
         results = []
         for row in self.cursor:
-            print(row)
             result_str = ""
             for i in row:
                 result_str += str(i) + " "
@@ -90,11 +84,10 @@ class QueryFrame(Frame):
         for i in range(len(selected_items)):
             # split each item into its separate fields
             rows_to_delete.append(self.result_field.get(selected_items[i]).split("\t"))
-        print(rows_to_delete)
+
         for row in rows_to_delete: # can have multiple selected for deletion
             for field in range(len(row)): # each part of an entry
                 row[field] = row[field].strip()  # pull off extra whitespace for db query
-        print(rows_to_delete)
 
         #del_cursor = self.db.cursor()
         for row in rows_to_delete:
@@ -104,7 +97,6 @@ class QueryFrame(Frame):
 
         for index in selected_items: # update listbox to show deletion
             self.result_field.delete(index)
-
 
 
     def get_query_type(self, query_type_str):
@@ -136,4 +128,4 @@ class QueryFrame(Frame):
     def query_type_change(self, *args):
         query_label = "Enter a {0} to search for:".format(self.search_type_default.get())
         self.query_field_label_text.set(query_label)
-        print("changed type to: ", self.search_type_default.get())
+
