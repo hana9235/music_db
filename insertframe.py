@@ -1,4 +1,6 @@
-from Tkinter import *
+from tkinter import *
+import tkinter.messagebox as tkmb
+import tkinter.ttk as ttk
 import sqlite3
 from global_vars import *
 
@@ -22,23 +24,23 @@ class InsertFrame(Frame):
         self.title.pack()
         self.title_entry_default = StringVar()
         self.title_entry_default.set("")
-        self.title_entry = Entry(self.insert_frame, textvariable = self.title_entry_default, font = ENTRY_FONT_STYLE)
-        self.title_entry.pack()
+        self.title_combobox = ttk.Combobox(self.insert_frame, textvariable = self.title_entry_default, font = ENTRY_FONT_STYLE, values = TITLES)
+        self.title_combobox.pack()
         ### artist
         self.artist = Label(self.insert_frame, text = "Artist:", font = LABEL_FONT_STYLE)
         self.artist.pack()
         self.artist_entry_default = StringVar()
         self.artist_entry_default.set("")
-        self.artist_entry = Entry(self.insert_frame, textvariable = self.artist_entry_default, font = ENTRY_FONT_STYLE)
-        self.artist_entry.pack()
+        self.artist_combobox = ttk.Combobox(self.insert_frame, textvariable = self.artist_entry_default, font = ENTRY_FONT_STYLE, values = ARTISTS)
+        self.artist_combobox.pack()
 
         ### album title
         self.album = Label(self.insert_frame, text = "Album/Video title:", font = LABEL_FONT_STYLE)
         self.album.pack()
         self.album_entry_default = StringVar()
         self.album_entry_default.set("")
-        self.album_entry = Entry(self.insert_frame, textvariable = self.album_entry_default, font = ENTRY_FONT_STYLE)
-        self.album_entry.pack()
+        self.album_combobox = ttk.Combobox(self.insert_frame, textvariable = self.album_entry_default, font = ENTRY_FONT_STYLE, values = ALBUMS)
+        self.album_combobox.pack()
 
         ### media type
         self.media = Label(self.insert_frame, text = "Media Type:", font = LABEL_FONT_STYLE)
@@ -70,14 +72,17 @@ class InsertFrame(Frame):
     def insert_sql(self, *args):
         """ pull from data entry fields, uppercase relevant data so things are uniform
         then add to database """
-        self.db.execute("""INSERT INTO MUSIC(track, title, artist, cdname, media, year)
-                    VALUES(:track, :title, :artist, :cdname, :media, :year)""",
-                    {'track':self.track_entry_default.get() + "\t",  #add tabs to split on
-                    'title':self.title_entry_default.get().upper() + "\t",
-                    'artist':self.artist_entry_default.get().upper() + "\t",
-                    'cdname':self.album_entry_default.get().upper() + "\t",
-                    'media':self.media_menu_default.get() + "\t",
-                    'year':self.year_default.get()}
-                    )
-        print("added to db")
-        self.db.commit()
+        try:
+            self.db.execute("""INSERT INTO MUSIC(track, title, artist, cdname, media, year)
+                        VALUES(:track, :title, :artist, :cdname, :media, :year)""",
+                        {'track':self.track_entry_default.get() + "\t",  #add tabs to split on
+                        'title':self.title_entry_default.get().upper() + "\t",
+                        'artist':self.artist_entry_default.get().upper() + "\t",
+                        'cdname':self.album_entry_default.get().upper() + "\t",
+                        'media':self.media_menu_default.get() + "\t",
+                        'year':self.year_default.get()}
+                        )
+            print("added to db")
+            self.db.commit()
+        except:
+            tkmb.showerror("Duplicate entry", "This entry is probably already in the database.")

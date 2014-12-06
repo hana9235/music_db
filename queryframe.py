@@ -1,4 +1,4 @@
-from Tkinter import *
+from tkinter import *
 import sqlite3
 from global_vars import *
 
@@ -69,6 +69,7 @@ class QueryFrame(Frame):
 
         results = []
         for row in self.cursor:
+            print(row)
             result_str = ""
             for i in row:
                 result_str += str(i) + " "
@@ -89,7 +90,7 @@ class QueryFrame(Frame):
         for i in range(len(selected_items)):
             # split each item into its separate fields
             rows_to_delete.append(self.result_field.get(selected_items[i]).split("\t"))
-
+        print(rows_to_delete)
         for row in rows_to_delete: # can have multiple selected for deletion
             for field in range(len(row)): # each part of an entry
                 row[field] = row[field].strip()  # pull off extra whitespace for db query
@@ -97,7 +98,7 @@ class QueryFrame(Frame):
 
         #del_cursor = self.db.cursor()
         for row in rows_to_delete:
-            self.cursor.execute("DELETE FROM MUSIC WHERE title = ? AND artist = ? AND cdname = ?", (row[1] + '\t', row[2] + '\t', row[3] + '\t'))
+            self.cursor.execute("DELETE FROM MUSIC WHERE title LIKE ? AND artist LIKE ? AND cdname LIKE ?", (row[1] + '%', row[2] + '%', row[3] + '%'))
             self.db.commit()
 
 
@@ -135,4 +136,4 @@ class QueryFrame(Frame):
     def query_type_change(self, *args):
         query_label = "Enter a {0} to search for:".format(self.search_type_default.get())
         self.query_field_label_text.set(query_label)
-        print "changed type to: ", self.search_type_default.get()
+        print("changed type to: ", self.search_type_default.get())

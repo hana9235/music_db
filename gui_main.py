@@ -1,4 +1,4 @@
-from Tkinter import *
+from tkinter import *
 import sqlite3
 from insertframe import *
 from queryframe import *
