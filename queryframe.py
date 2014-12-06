@@ -35,6 +35,7 @@ class QueryFrame(Frame):
 
         # search box
         self.query_item = StringVar()
+        self.query_item.trace("w", self.submit_query) # live update as search box is modified
         self.query_box = Entry(self.query_frame, textvariable = self.query_item, font = ENTRY_FONT_STYLE)
         self.query_box.pack()
 
@@ -42,7 +43,13 @@ class QueryFrame(Frame):
         self.submit_query_button = Button(self.query_frame, text = "Submit", command = self.submit_query, font = LABEL_FONT_STYLE)
         self.submit_query_button.pack()
 
-        self.result_field = Listbox(self.query_frame, width = 50, height = 15, font = ("Courier New", 12))
+        # result field and scrollbars
+        self.y_scroll = Scrollbar(self.query_frame, orient = VERTICAL)
+        
+        self.result_field = Listbox(self.query_frame, width = 50, height = 15,
+                                        yscrollcommand = self.y_scroll.set, font = ("Courier New", 12))
+        self.y_scroll.pack(side = RIGHT, fill = Y, anchor = N)
+        self.y_scroll.config(command = self.result_field.yview)
         self.result_field.pack()
 
         self.delete_button = Button(self.query_frame, text = "Delete Selected", command = self.delete, font = LABEL_FONT_STYLE)
