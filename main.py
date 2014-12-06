@@ -2,15 +2,45 @@ from __future__ import print_function
 import sqlite3
 import os.path
 
+
 data_folder = "data"
 db_file = "test.db"
 path = os.path.join(data_folder, db_file)
 
+
 db = sqlite3.connect(path)
+
+def read_input_file(path):
+    # | is the newline separator
+    # commas separate values
+    in_file = open(path)
+    lines = in_file.read().splitlines()
+    for line in range(len(lines)):
+        lines[line] = lines[line].split(",")
+        insert_into_db(lines[line])
+    
+    
+def insert_into_db(row):
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO MUSIC(track, title, artist, cdname, media, year) \
+                        VALUES(:track, :title, :artist, :cdname, :media, :year)", 
+                    {'track':row[0] + "\t",
+                    'title':row[1].upper() + "\t",
+                    'artist':row[2].upper() + "\t",
+                    'cdname':row[3].upper() + "\t",
+                    'media':row[4].upper() + "\t",
+                    'year':row[5] }
+                    )
+    db.commit()
+
+
+infile_path = os.path.join(data_folder, "testnobar.csv")
+#read_input_file(infile_path) # uncomment to add the file again
 
 ### DB SHOULD ONLY BE SET UP ONCE, THEN ALLOW HIM TO ADD THINGS AS HE WANTS
 ### MAKE SURE TO COMMIT AFTER EVERY SINGLE ADDITION
 ### TWO TABLES, ONE FOR CDS AND ONE FOR DVDS?
+
 
 db.execute(""" CREATE TABLE IF NOT EXISTS MUSIC 
             (TRACK INT NOT NULL,
