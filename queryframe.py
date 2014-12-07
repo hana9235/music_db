@@ -34,15 +34,18 @@ class QueryFrame(Frame):
         self.query_item = StringVar()
         self.query_item.trace("w", self.submit_query) # live update as search box is modified
         self.query_box = Entry(self.query_frame, textvariable = self.query_item, font = ENTRY_FONT_STYLE)
-        self.query_box.pack()
+        self.query_box.pack(pady = 5)
 
         # result field and scrollbars
         self.y_scroll = Scrollbar(self.query_frame, orient = VERTICAL)
-        self.result_field = Listbox(self.query_frame, width = 50, height = 15,
-                                        yscrollcommand = self.y_scroll.set, font = ("Courier New", 12), borderwidth = 5, relief = GROOVE)
+        self.x_scroll = Scrollbar(self.query_frame, orient = HORIZONTAL)
+        self.result_field = Listbox(self.query_frame, width = 60, height = 15,
+                                        yscrollcommand = self.y_scroll.set, xscrollcommand = self.x_scroll.set, font = ("Courier New", 14), borderwidth = 5, relief = GROOVE)
         self.y_scroll.pack(side = RIGHT, fill = Y, anchor = N)
         self.y_scroll.config(command = self.result_field.yview)
-        self.result_field.pack(pady = 20)
+        self.x_scroll.config(command = self.result_field.xview)
+        self.result_field.pack()
+        self.x_scroll.pack(fill = X, pady = 5)
 
         # delete and view all buttons
         self.delete_button = Button(self.query_frame, text = "Delete Selected", command = self.delete, font = LABEL_FONT_STYLE)
@@ -57,7 +60,7 @@ class QueryFrame(Frame):
         query_string = self.query_item.get().upper()
         query_type = self.get_query_type(self.search_type_default.get()) # change dropdown text to match db fields
 
-        select_statement = """ SELECT * FROM MUSIC WHERE {0} LIKE '%{1}%' """.format(query_type, query_string)
+        select_statement = """ SELECT * FROM MUSIC WHERE {0} LIKE '%{1}%' ORDER BY 'cdname' """.format(query_type, query_string)
         # Using the LIKE statement allows searching for substrings
         # allows input of "mer" to match "summer, mermaid, hammering"
         self.cursor.execute(select_statement)
@@ -112,6 +115,7 @@ class QueryFrame(Frame):
 
 
     def view(self):
+        self.query_item.set("")
         self.cursor.execute("""select * from MUSIC""")
         results = []
         for row in self.cursor:
