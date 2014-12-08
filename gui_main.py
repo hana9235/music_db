@@ -55,26 +55,27 @@ class Gui_Main(Frame):
         ### query_frame - don't pack it so it won't show up at first
         self.query_frame = QueryFrame(self.content_frame, db)
         
-        ### help_frame - don't pack
-        self.help_frame = HelpFrame(self.content_frame)
+        ### help_frame is done through the help button and in a new window
 
         self.content_frame.pack()
 
 
     def show_insert(self):
         self.query_frame.pack_forget()
-        self.help_frame.pack_forget()
         self.insert_frame.pack(fill = BOTH)
 
     def show_query(self):
         self.insert_frame.pack_forget()
-        self.help_frame.pack_forget()
         self.query_frame.pack(fill = BOTH)
         
     def show_help(self):
-        self.insert_frame.pack_forget()
-        self.query_frame.pack_forget()
-        self.help_frame.pack(fill = BOTH)
+        self.help_window = Toplevel()
+        self.help_window.title("Help")
+        self.help_window.focus_set()
+        self.help_frame = Frame(self.help_window, width = 550, height = 600)
+        self.help_frame.pack()
+        help_content = HelpFrame(self.help_frame)
+        help_content.pack()
 
 
 

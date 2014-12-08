@@ -72,9 +72,13 @@ class Gui_Main(Frame):
         self.query_frame.pack(fill = BOTH)
         
     def show_help(self):
-        self.insert_frame.pack_forget()
-        self.query_frame.pack_forget()
-        self.help_frame.pack(fill = BOTH)
+        self.help_window = Toplevel()
+        self.help_window.title("Help")
+        self.help_window.focus_set()
+        self.help_frame = Frame(self.help_window, width = 550, height = 600)
+        self.help_frame.pack()
+        help_content = HelpFrame(self.help_frame)
+        help_content.pack()
 
 
 

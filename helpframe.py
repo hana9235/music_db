@@ -10,7 +10,7 @@ class HelpFrame(Frame):
         Frame.__init__(self, root)
         self.help_frame = Frame(self, root)
 
-        self.text_field = ScrolledText(self.help_frame, width = 100, height = 40)
+        self.text_field = ScrolledText(self.help_frame, width = 60, height = 30)
         self.text_field.pack()
         
         self.text_field.insert(END, readme_text)
